@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -15,6 +16,16 @@ use Illuminate\Support\Facades\Artisan;
 | simple approach to interacting with each command's IO methods.
 |
 */
+
+Artisan::command('orderTest',function () {
+
+    $order = Order::first();
+
+    $order->products->each(function ($product) {
+        dump ($product->pivot->quantity);
+    });
+
+});
 
 Artisan::command('importCategoriesFromFile', function () {
     
