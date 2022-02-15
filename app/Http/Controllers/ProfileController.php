@@ -5,13 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\Address;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
-    public function profile ($id)
+    public function profile (User $user)
     {        
-        $user = User::findOrFail($id);
-        return view('profile', compact('user'));
+        if (!Auth::user()) 
+            return redirect()->route('home');
+        if (Auth::user()->isAdmin() || $user->id == Auth::user()->id)
+            return view('profile', compact('user'));
+
+        return redirect()->route('home');
     }
 
     public function save (Request $request)
@@ -28,7 +34,22 @@ class ProfileController extends Controller
         request()->validate([
             'name' => 'required',
             'email' => "email|required|unique:users,email,{$user->id}",
-            'picture' => 'mimetypes:image/*'
+            'picture' => 'mimetypes:image/*',
+            'current_password' => 'current_password|required_with:password|nullable',
+            'password' => 'confirmed|min:8|nullable'
+        ]);
+
+        if ($input['password']) {
+            $user->password = Hash::make($input['password']);
+            $user->save();
+        }
+
+        Address::where('user_id', $user->id)->update([
+            'main' => 0
+        ]);
+
+        Address::where('id', $input['main_address'])->update([
+            'main' => 1
         ]);
 
         if ($newAddress) {
@@ -53,6 +74,7 @@ class ProfileController extends Controller
         $user->name = $name;
         $user->email = $email;
         $user->save();
+        session()->flash('profileSaved');
         return back();
     }
 }
