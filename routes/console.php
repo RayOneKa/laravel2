@@ -33,6 +33,7 @@ Artisan::command('importCategoriesFromFile', function () {
 
     $i = 0;
     $insert = [];
+    $columns = [];
     while ($row = fgetcsv($file, 1000, ';')) {
         if ($i++ == 0) {
             $bom = pack('H*','EFBBBF');
