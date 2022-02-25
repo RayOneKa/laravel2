@@ -20,6 +20,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/test/test', [HomeController::class, 'testtest']);
+
+
 Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
     Route::get('/', "App\Http\Controllers\AdminController@admin")->name('admin');
     Route::get('/users', [AdminController::class, 'users'])->name('adminUsers');
@@ -40,6 +43,7 @@ Route::prefix('cart')->group(function () {
 });
 
 Route::get('/category/{category}', [HomeController::class, 'category'])->name('category');
+Route::get('/category/{category}/getProducts', [HomeController::class, 'getProducts']);
 Route::get('/profile/{user}', [ProfileController::class, 'profile'])->name('profile');
 Route::post('/profile/save', [ProfileController::class, 'save'])->name('saveProfile');
 
