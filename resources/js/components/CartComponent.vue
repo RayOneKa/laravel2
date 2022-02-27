@@ -44,10 +44,10 @@
             </tbody>
         </table>
 
-        <input placeholder="Имя" class="form-control mb-2" name='name' v-model="user.name">
-        <input placeholder="Почта" class="form-control mb-2" name='email' v-model="user.email">
-        <input placeholder="Адрес" class="form-control mb-2" name='address' v-model="address">
-        <template v-if='!user.name'>
+        <input placeholder="Имя" class="form-control mb-2" name='name' v-model="userName">
+        <input placeholder="Почта" class="form-control mb-2" name='email' v-model="userEmail">
+        <input placeholder="Адрес" class="form-control mb-2" name='address' v-model="userAddress">
+        <template v-if='!userName'>
             <!-- не забудьте добавить оферту -->    
             <input id='register_confirmation' name='register_confirmation' type="checkbox">
             <label for="register_confirmation">Вы будете автоматически зарегистрированы</label>
@@ -74,7 +74,10 @@ export default {
             randomText: 'lalala',
             products: this.prods,
             errors: [],
-            loading: false
+            loading: false,
+            userName: null,
+            userEmail: null,
+            userAddress: null
         }
     },
     computed:  {
@@ -124,6 +127,15 @@ export default {
                 .finally(() => {
                     this.loading = false
                 })
+        }
+    },
+    mounted () {
+        if (this.user) {
+            this.userName = this.user.name
+            this.userEmail = this.user.email
+        }
+        if (this.address) {
+            this.userAddress = this.address
         }
     }
 }
