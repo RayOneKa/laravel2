@@ -26,11 +26,6 @@
             buttonClicked (data) {
                 console.log(`клик в дочернем компоненте (${data})`)
             }
-        },
-        mounted () {
-            let quantity = cartProductsQuantity.textContent.split('(')[1]
-            quantity = quantity.split(')')[0]
-            localStorage.cartProductsQuantity = quantity
         }
     }
 </script>
