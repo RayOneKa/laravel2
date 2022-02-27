@@ -67,11 +67,12 @@ class CartController extends Controller
 
     public function createOrder ()
     {
+        sleep(1);
         request()->validate([
             'name' => 'required',
             'email' => 'required|email',
             'address' => 'required',
-            'register_confirmation' => 'accepted'
+            'register_confirmation' => 'accepted|sometimes'
         ]);
 
             DB::transaction(function () {
@@ -112,12 +113,12 @@ class CartController extends Controller
                 $data = [
                     'products' => $order->products,
                     'name' => $user->name,
-                    'password' => $password
+                    'password' => $password ?? ''
                 ];
                 Mail::to($user->email)->send(new OrderCreated($data));
             });        
 
             session()->forget('cart');
-            return back();
+            return true;
     }
 }
