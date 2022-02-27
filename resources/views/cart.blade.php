@@ -14,7 +14,9 @@
 @section('content')
     <cart-component
         :prods="{{$products}}"
+        @if ($user)
         :user="{{$user}}"
+        @endif
         address="{{$address}}"
     >
     </cart-component>
