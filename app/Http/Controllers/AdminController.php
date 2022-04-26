@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\exportCategoriesJob;
+use App\Models\Category;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -36,7 +38,8 @@ class AdminController extends Controller
 
     public function categories ()
     {
-        return view('admin.categories');
+        $categories = Category::get();
+        return view('admin.categories', compact('categories'));
     }
 
     public function enterAsUser ($id)
@@ -67,5 +70,10 @@ class AdminController extends Controller
         $user = User::find(request('user_id'));
         $user->roles()->attach(Role::find(request('role_id')));
         return back();
+    }
+
+    public function exportCategories ()
+    {
+        exportCategoriesJob::dispatch(Auth::user()->id);
     }
 }
