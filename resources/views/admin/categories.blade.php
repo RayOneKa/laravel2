@@ -8,4 +8,6 @@
     <h1>
         Список категорий
     </h1>
+
+    <admin-categories-component :categories="{{$categories}}"></admin-categories-component>
 @endsection

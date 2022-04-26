@@ -9,7 +9,7 @@
                 <p class="card-text">
                     {{ category.description }}
                 </p>
-                <a :href="`${routeCategory}/${category.id}`" class="btn btn-primary">Перейти</a>
+                <router-link class="btn btn-link" :to='`/category/${category.id}`'>Перейти</router-link>
 
                 <button @click='buttonClicked' class="btn btn-link">CLICK</button>
             </div>
@@ -19,7 +19,7 @@
 
 <script>
     export default {
-        props: ['category', 'routeCategory'],
+        props: ['category'],
         methods: {
             buttonClicked () {
                 this.$emit('buttonClicked', this.category.id)

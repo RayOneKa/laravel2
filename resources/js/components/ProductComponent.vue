@@ -28,18 +28,41 @@ export default {
     props: ['product'],
     data () {
         return {
-            cartQuantity: this.product.quantity
+            cartQuantity: JSON.parse(localStorage.getItem('cart'))[this.product.id] || 0
         }
     },
     methods: {
         cartAction (type) {
-            const params = {
-                id: this.product.id
+
+            let cart = JSON.parse(localStorage.getItem('cart'))
+
+            if (type == 'addTo') {
+                if (!cart)
+                    cart = {}
+                if (typeof cart[this.product.id] ==  'undefined') {
+                    cart[this.product.id] = 1
+                } else {
+                    cart[this.product.id] += 1
+                }
+                localStorage.setItem('cart', JSON.stringify(cart))
+                this.cartQuantity = cart[this.product.id]
+
+            } else if (type == 'removeFrom') {
+                if (cart[this.product.id] == 1) {
+                    delete cart[this.product.id]
+                } else {
+                    cart[this.product.id] -= 1
+                }
+                localStorage.setItem('cart', JSON.stringify(cart))
+                this.cartQuantity = cart[this.product.id] || 0
             }
-            axios.post(`/cart/${type}Cart`, params)
-                .then(response => {
-                    this.cartQuantity = response.data
-                })
+
+            let quantity = 0
+            for (let key in cart) {
+                quantity += cart[key]
+            }
+
+            this.$store.dispatch('changecartProductsQuantity', quantity)
         }
     }
 }

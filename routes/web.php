@@ -1,10 +1,6 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,33 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-
-Route::get('/test/test', [HomeController::class, 'testtest']);
-
-
-Route::prefix('admin')->middleware(['auth', 'is_admin'])->group(function () {
-    Route::get('/', "App\Http\Controllers\AdminController@admin")->name('admin');
-    Route::get('/users', [AdminController::class, 'users'])->name('adminUsers');
-    Route::get('/products', [AdminController::class, 'products'])->name('adminProducts');
-    Route::get('/categories', [AdminController::class, 'categories'])->name('adminCategories');
-    Route::get('/enterAsUser/{id}', [AdminController::class, 'enterAsUser'])->name('enterAsUser');
-    Route::prefix('roles')->group(function() {
-        Route::post('/add', [AdminController::class, 'addRole'])->name('addRole');
-        Route::post('/addRoleToUser', [AdminController::class, 'addRoleToUser'])->name('addRoleToUser');
-    });
-});
-
-Route::prefix('cart')->group(function () {
-    Route::get('/', [CartController::class, 'cart'])->name('cart');
-    Route::post('/removeFromCart', [CartController::class, 'removeFromCart'])->name('removeFromCart');
-    Route::post('/addToCart', [CartController::class, 'addToCart'])->name('addToCart');
-    Route::post('/createOrder', [CartController::class, 'createOrder'])->name('createOrder');
-});
-
-Route::get('/category/{category}', [HomeController::class, 'category'])->name('category');
-Route::get('/category/{category}/getProducts', [HomeController::class, 'getProducts']);
-Route::get('/profile/{user}', [ProfileController::class, 'profile'])->name('profile');
-Route::post('/profile/save', [ProfileController::class, 'save'])->name('saveProfile');
-
-Auth::routes();
+Route::any('/{any}', function () {
+    return view('layouts.app');
+})->where('any', '.*');
