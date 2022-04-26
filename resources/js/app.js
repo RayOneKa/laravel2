@@ -19,10 +19,7 @@ window.Vue = require('vue').default;
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('categories-component', require('./components/CategoriesComponent.vue').default);
-Vue.component('category-products-component', require('./components/CategoryProductsComponent.vue').default);
-Vue.component('cart-component', require('./components/CartComponent.vue').default);
+Vue.component('nav-bar-cart-component', require('./components/NavBarCartComponent.vue').default);
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -30,6 +27,11 @@ Vue.component('cart-component', require('./components/CartComponent.vue').defaul
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+import store from './store/store.js'
+import router from './router/router.js'
+
 const app = new Vue({
     el: '#app',
+    store,
+    router
 });

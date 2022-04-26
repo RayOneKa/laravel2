@@ -28,7 +28,7 @@ class ProfileController extends Controller
         $email = $input['email'];
         $userId = $input['userId'];
         $picture = $input['picture'] ?? null;
-        $newAddress = $input['new_address'];
+        $newAddress = $input['new_address'] ?? null;
         $user = User::find($userId);
 
         request()->validate([
@@ -39,7 +39,7 @@ class ProfileController extends Controller
             'password' => 'confirmed|min:8|nullable'
         ]);
 
-        if ($input['password']) {
+        if (isset($input['password'])) {
             $user->password = Hash::make($input['password']);
             $user->save();
         }
@@ -48,9 +48,12 @@ class ProfileController extends Controller
             'main' => 0
         ]);
 
-        Address::where('id', $input['main_address'])->update([
-            'main' => 1
-        ]);
+        if (isset($input['main_address'])) {
+            Address::where('id', $input['main_address'])->update([
+                'main' => 1
+            ]);
+        }
+
 
         if ($newAddress) {
             Address::where('user_id', $user->id)->update([

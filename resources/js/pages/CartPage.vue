@@ -47,7 +47,7 @@
         <input placeholder="Имя" class="form-control mb-2" name='name' v-model="userName">
         <input placeholder="Почта" class="form-control mb-2" name='email' v-model="userEmail">
         <input placeholder="Адрес" class="form-control mb-2" name='address' v-model="userAddress">
-        <template v-if='!userName'>
+        <template>
             <!-- не забудьте добавить оферту -->    
             <input id='register_confirmation' name='register_confirmation' type="checkbox">
             <label for="register_confirmation">Вы будете автоматически зарегистрированы</label>
@@ -64,15 +64,16 @@
 </template>
 
 <script>
-import InputComponent from './custom/Input.vue'
+import InputComponent from '../components/custom/Input.vue'
 
 export default {
-    props: ['prods', 'user', 'address'],
     components: {InputComponent},
     data () {
         return {
+            user: null,
+            address: null,
             randomText: 'lalala',
-            products: this.prods,
+            products: [],
             errors: [],
             loading: false,
             userName: null,
@@ -89,31 +90,52 @@ export default {
     },
     methods: {
         cartAction (type, id) {
-            const params = {
-                id
-            }
-            axios.post(`/cart/${type}Cart`, params)
-                .then(response => {
-                    const index = this.products.findIndex((product) => {
-                        return product.id == id
-                    })
-                    if (response.data > 0) {
-                        this.products[index].quantity = response.data
-                    } else {
-                        this.products.splice(index, 1)
-                    }
+
+            let cart = JSON.parse(localStorage.getItem('cart'))
+
+            if (type == 'addTo') {
+                cart[id] += 1
+                localStorage.setItem('cart', JSON.stringify(cart))
+
+                const index = this.products.findIndex((product) => {
+                    return product.id == id
                 })
+                this.products[index].quantity = cart[id]
+            } else if (type == 'removeFrom') {
+                const index = this.products.findIndex((product) => {
+                    return product.id == id
+                })
+
+                if (cart[id] == 1) {
+                    delete cart[id]
+                    this.products.splice(index, 1)
+                } else {
+                    cart[id] -= 1
+                    this.products[index].quantity = cart[id]
+                }
+                localStorage.setItem('cart', JSON.stringify(cart))
+            }
+
+            let quantity = 0
+            for (let key in cart) {
+                quantity += cart[key]
+            }
+
+            this.$store.dispatch('changecartProductsQuantity', quantity)
         },
         createOrder () {
+            console.log("createOrder")
             this.loading = true
             this.errors = []
             const params = {
-                name: this.user.name,
-                email: this.user.email,
-                address: this.address
+                name: this.userName,
+                email: this.userEmail,
+                address: this.userAddress,
+                products: JSON.parse(localStorage.getItem('cart'))
             }            
-            axios.post('/cart/createOrder', params)
+            axios.post('/api/cart/createOrder', params)
                 .then(() => {
+                    localStorage.setItem('cart', JSON.stringify({}))
                     document.location.href = '/'
                 })
                 .catch(error => {
@@ -129,7 +151,16 @@ export default {
                 })
         }
     },
-    mounted () {
+    async mounted () {
+        const cart = JSON.parse(localStorage.getItem('cart'))
+        const params = {
+            products: cart
+        }
+        const cartInfo = await axios.get('/api/cart/info', {params})
+        this.products = cartInfo.data.products
+        this.user = cartInfo.data.user
+        this.address = cartInfo.data.address
+
         if (this.user) {
             this.userName = this.user.name
             this.userEmail = this.user.email

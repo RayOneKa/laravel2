@@ -17,6 +17,11 @@ class HomeController extends Controller
 
     }
 
+    public function getCategories ()
+    {
+        return Category::get();
+    }
+
     /**
      * Show the application dashboard.
      *
@@ -35,6 +40,7 @@ class HomeController extends Controller
 
     public function getProducts (Category $category) 
     {
+        sleep(2);
         $products = $category->products;
         $products->transform(function ($product) {
             $product->quantity = session("cart.{$product->id}") ?? 0;

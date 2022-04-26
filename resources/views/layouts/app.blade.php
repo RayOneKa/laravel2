@@ -29,7 +29,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="{{ route('home') }}">
+                <a class="navbar-brand" href="/">
                     {{ config('app.name', 'Laravel') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -45,11 +45,7 @@
                     <!-- Right Side Of Navbar -->
                     <ul class="navbar-nav ms-auto">
                         <!-- Authentication Links -->
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('cart') }}">
-                                Корзина <span id='cartProductsQuantity'>({{ array_sum(session('cart') ?? []) }})</span>
-                            </a>
-                        </li>
+                        <nav-bar-cart-component></nav-bar-cart-component>
                         @guest
                             @if (Route::has('login'))
                                 <li class="nav-item">
@@ -75,13 +71,13 @@
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('profile', Auth::user()->id) }}">Профиль</a>
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                    <a class="dropdown-item" href="/logout"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
-                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                    <form id="logout-form" action="/logout" method="POST" class="d-none">
                                         @csrf
                                     </form>
                                 </div>
@@ -94,7 +90,7 @@
 
         <main class="py-4">
             <div class="container">
-                @yield('content')
+                <router-view></router-view>
             </div>
         </main>
     </div>
